@@ -15,7 +15,7 @@ pa_get_core_num()
 
 
 int 
-pa_set_core(pthread_t thd, int core_id) 
+pa_set_core(int core_id) 
 {
 	int num_cores = sysconf(_SC_NPROCESSORS_ONLN);
 	if (core_id < 0 || core_id >= num_cores)
@@ -24,6 +24,7 @@ pa_set_core(pthread_t thd, int core_id)
 	cpu_set_t cpuset;
 	CPU_ZERO(&cpuset);
 	CPU_SET(core_id, &cpuset);
-   
-	return pthread_setaffinity_np(thd, sizeof(cpu_set_t), &cpuset);
+
+	pthread_t current_thread = pthread_self();    
+	return pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
 }
